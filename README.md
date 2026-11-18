@@ -66,14 +66,19 @@ Kelas : PBP B
 ```text
 lib/
   main.dart             # Entry point, MyApp, MaterialApp, dan tema aplikasi.
-  menu.dart             # MyHomePage, InfoCard, ItemHomepage, dan ItemCard.
+  screens/
+    menu.dart           # Halaman utama, InfoCard, dan ItemHomepage.
+    project_form.dart   # Form tambah proyek dan dialog konfirmasi.
+  widgets/
+    left_drawer.dart    # Navigasi Home dan Add Project.
+    project_card.dart   # ItemCard untuk tombol menu utama.
 test/
-  widget_test.dart      # Tes identitas, menu, SnackBar, dan ukuran layar.
+  widget_test.dart      # Tes menu, navigasi, validasi form, dan dialog.
 pubspec.yaml            # Metadata, batas SDK, dan dependency.
 README.md               # Dokumentasi proyek dan jawaban reflektif.
 ```
 
-`main()` memanggil `runApp(const MyApp())`. `MyApp` menyiapkan `MaterialApp` dengan tema berbasis indigo dan menjadikan `MyHomePage` sebagai halaman awal. Halaman utama dipisahkan ke `lib/menu.dart`, sehingga konfigurasi aplikasi tidak bercampur dengan susunan kartu profil dan tombol.
+`main()` memanggil `runApp(const MyApp())`. `MyApp` menyiapkan `MaterialApp` dengan tema berbasis indigo dan menjadikan `MyHomePage` sebagai halaman awal. Halaman utama ada di `lib/screens/menu.dart`.
 
 # Progres Mingguan
 
@@ -97,11 +102,19 @@ Model `ItemHomepage` menyimpan `name`, `icon`, dan `color`. `ItemCard` menggunak
 
 Halaman dibungkus `SafeArea` dan `SingleChildScrollView`. Grid menggunakan tiga kolom, tinggi item 144, `shrinkWrap: true`, dan `NeverScrollableScrollPhysics`, sehingga pengguliran ditangani oleh halaman luarnya.
 
-> Tombol pada tugas ini hanya menampilkan SnackBar. **Lihat Proyek** belum membuka halaman daftar, **Tambah Proyek** belum menyimpan data, dan **Logout** belum mengakhiri sesi login. Fitur-fitur tersebut tidak diklaim sudah tersedia.
+> Pada Tugas 7, ketiga kartu hanya menampilkan SnackBar. Tutorial 09 menambahkan navigasi untuk **Tambah Proyek**.
 
-# AI Disclosure (last upd: Tugas Individu 7)
+## Tutorial 09: Navigasi dan Form
+
+- Drawer di kedua halaman menyediakan menu **Home** dan **Add Project**. Kartu **Tambah Proyek** juga membuka form, dengan tombol Back untuk kembali ke halaman utama.
+- Form berisi nama proyek, deskripsi, kategori, teknologi, dan tautan. Nama dan deskripsi wajib diisi; kategori awalnya **Web Development**.
+- Tombol **Save** menampilkan isi form jika valid. **OK** menutup dialog dan mengosongkan form, dengan kategori kembali ke pilihan awal. Data belum disimpan ke database atau dikirim ke API.
+
+# AI Disclosure
 
 Untuk Tugas 7, saya menggunakan **Hermes Agent** (model `gpt-6.1-sol-900k`, provider OpenAI Codex) untuk mengklarifikasi pemahaman untuk menjawab pertanyaan refleksi.
+
+Untuk Tutorial 09, **Hermes Agent** membantu mengimplementasikan navigasi dan form dari `tutorial-9.pdf`, menata struktur file, dan menambahkan widget test.
 
 ### Log Prompt
 
