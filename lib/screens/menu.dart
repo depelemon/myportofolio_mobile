@@ -1,4 +1,6 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:myportofolio_mobile/screens/experience_form.dart';
+import 'package:myportofolio_mobile/screens/project_form.dart';
 import 'package:myportofolio_mobile/widgets/left_drawer.dart';
 import 'package:myportofolio_mobile/widgets/project_card.dart';
 
@@ -11,7 +13,18 @@ class MyHomePage extends StatelessWidget {
 
   final List<ItemHomepage> items = [
     ItemHomepage("Lihat Proyek", Icons.folder, Colors.blue),
-    ItemHomepage("Tambah Proyek", Icons.add_circle, Colors.green),
+    ItemHomepage(
+      "Tambah Proyek",
+      Icons.add_circle,
+      Colors.green,
+      destination: const ProjectFormPage(),
+    ),
+    ItemHomepage(
+      "Tambah Pengalaman",
+      Icons.work_outline,
+      Colors.deepPurple,
+      destination: const ExperienceFormPage(),
+    ),
     ItemHomepage("Logout", Icons.logout, Colors.red),
   ];
 
@@ -26,7 +39,7 @@ class MyHomePage extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
       ),
-      drawer: const LeftDrawer(isHome: true),
+      drawer: const LeftDrawer(currentPage: DrawerPage.home),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
@@ -62,7 +75,7 @@ class MyHomePage extends StatelessWidget {
                 padding: const EdgeInsets.all(20),
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
-                crossAxisCount: 3,
+                crossAxisCount: MediaQuery.sizeOf(context).width < 480 ? 2 : 4,
                 mainAxisExtent: 144,
                 shrinkWrap: true,
                 children: items.map((item) => ItemCard(item)).toList(),
@@ -103,6 +116,7 @@ class ItemHomepage {
   final String name;
   final IconData icon;
   final Color color;
+  final Widget? destination;
 
-  ItemHomepage(this.name, this.icon, this.color);
+  ItemHomepage(this.name, this.icon, this.color, {this.destination});
 }

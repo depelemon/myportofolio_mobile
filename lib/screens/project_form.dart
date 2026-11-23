@@ -78,7 +78,7 @@ class _ProjectFormPageState extends State<ProjectFormPage> {
         backgroundColor: Colors.indigo,
         foregroundColor: Colors.white,
       ),
-      drawer: const LeftDrawer(isHome: false),
+      drawer: const LeftDrawer(currentPage: DrawerPage.project),
       body: SafeArea(
         child: Form(
           key: _formKey,

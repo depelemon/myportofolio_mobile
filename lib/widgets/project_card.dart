@@ -1,6 +1,5 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/screens/menu.dart';
-import 'package:myportofolio_mobile/screens/project_form.dart';
 
 class ItemCard extends StatelessWidget {
   final ItemHomepage item;
@@ -23,13 +22,13 @@ class ItemCard extends StatelessWidget {
                 content: Text('Kamu telah menekan tombol ${item.name}!'),
               ),
             );
-          if (item.name == 'Tambah Proyek') {
+          final destination = item.destination;
+          if (destination != null) {
             Navigator.push(
               context,
               MaterialPageRoute<void>(
-                // Keep the menu SnackBar from covering the form's Save button.
-                builder: (_) =>
-                    const ScaffoldMessenger(child: ProjectFormPage()),
+                // Keep the menu SnackBar from covering the form controls.
+                builder: (_) => ScaffoldMessenger(child: destination),
               ),
             );
           }

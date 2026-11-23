@@ -1,11 +1,21 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:myportofolio_mobile/screens/experience_form.dart';
 import 'package:myportofolio_mobile/screens/menu.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
 
-class LeftDrawer extends StatelessWidget {
-  const LeftDrawer({super.key, required this.isHome});
+enum DrawerPage { home, project, experience }
 
-  final bool isHome;
+class LeftDrawer extends StatelessWidget {
+  const LeftDrawer({super.key, required this.currentPage});
+
+  final DrawerPage currentPage;
+
+  void _openForm(BuildContext context, DrawerPage page, Widget form) {
+    final navigator = Navigator.of(context);
+    navigator.pop();
+    if (currentPage == page) return;
+    navigator.pushReplacement(MaterialPageRoute<void>(builder: (_) => form));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +53,7 @@ class LeftDrawer extends StatelessWidget {
               final navigator = Navigator.of(context);
               final isFirst = ModalRoute.of(context)!.isFirst;
               navigator.pop();
-              if (isHome) return;
+              if (currentPage == DrawerPage.home) return;
 
               if (isFirst) {
                 navigator.pushReplacement(
@@ -57,17 +67,17 @@ class LeftDrawer extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.add_circle_outline),
             title: const Text('Add Project'),
-            onTap: () {
-              final navigator = Navigator.of(context);
-              navigator.pop();
-              if (isHome) {
-                navigator.pushReplacement(
-                  MaterialPageRoute<void>(
-                    builder: (_) => const ProjectFormPage(),
-                  ),
-                );
-              }
-            },
+            onTap: () =>
+                _openForm(context, DrawerPage.project, const ProjectFormPage()),
+          ),
+          ListTile(
+            leading: const Icon(Icons.work_outline),
+            title: const Text('Add Experience'),
+            onTap: () => _openForm(
+              context,
+              DrawerPage.experience,
+              const ExperienceFormPage(),
+            ),
           ),
         ],
       ),
