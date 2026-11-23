@@ -69,11 +69,13 @@ lib/
   screens/
     menu.dart           # Halaman utama, InfoCard, dan ItemHomepage.
     project_form.dart   # Form tambah proyek dan dialog konfirmasi.
+    experience_form.dart # Form tambah pengalaman dan dialog ringkasan.
   widgets/
-    left_drawer.dart    # Navigasi Home dan Add Project.
+    left_drawer.dart    # Navigasi Home, Add Project, dan Add Experience.
     project_card.dart   # ItemCard untuk tombol menu utama.
 test/
-  widget_test.dart      # Tes menu, navigasi, validasi form, dan dialog.
+  widget_test.dart      # Tes menu dan form proyek.
+  experience_form_test.dart # Tes navigasi, validasi, dan tampilan form pengalaman.
 pubspec.yaml            # Metadata, batas SDK, dan dependency.
 README.md               # Dokumentasi proyek dan jawaban reflektif.
 ```
@@ -100,7 +102,7 @@ Menu aksi yang tersedia:
 
 Model `ItemHomepage` menyimpan `name`, `icon`, dan `color`. `ItemCard` menggunakan `item.color` sebagai warna `Material`, bukan memilih warna dengan percabangan berdasarkan nama tombol. Saat kartu ditekan, `InkWell.onTap` menyembunyikan SnackBar sebelumnya dan menampilkan pesan sesuai nama item melalui `ScaffoldMessenger`.
 
-Halaman dibungkus `SafeArea` dan `SingleChildScrollView`. Grid menggunakan tiga kolom, tinggi item 144, `shrinkWrap: true`, dan `NeverScrollableScrollPhysics`, sehingga pengguliran ditangani oleh halaman luarnya.
+Pada Tugas 7, halaman dibungkus `SafeArea` dan `SingleChildScrollView`. Grid saat itu menggunakan tiga kolom, tinggi item 144, `shrinkWrap: true`, dan `NeverScrollableScrollPhysics`, sehingga pengguliran ditangani oleh halaman luarnya.
 
 > Pada Tugas 7, ketiga kartu hanya menampilkan SnackBar. Tutorial 09 menambahkan navigasi untuk **Tambah Proyek**.
 
@@ -110,23 +112,21 @@ Halaman dibungkus `SafeArea` dan `SingleChildScrollView`. Grid menggunakan tiga 
 - Form berisi nama proyek, deskripsi, kategori, teknologi, dan tautan. Nama dan deskripsi wajib diisi; kategori awalnya **Web Development**.
 - Tombol **Save** menampilkan isi form jika valid. **OK** menutup dialog dan mengosongkan form, dengan kategori kembali ke pilihan awal. Data belum disimpan ke database atau dikirim ke API.
 
-# AI Disclosure
+## Tugas 8: Form Tambah Pengalaman
 
-Untuk Tugas 7, saya menggunakan **Hermes Agent** (model `gpt-6.1-sol-900k`, provider OpenAI Codex) untuk mengklarifikasi pemahaman untuk menjawab pertanyaan refleksi.
+- Buka form lewat kartu **Tambah Pengalaman** atau lewat **Add Experience** di drawer. Gunakan **Home** di drawer untuk kembali ke halaman utama, termasuk di Chrome.
+- Grid menu yang sebelumnya memakai tiga kolom sekarang memakai dua kolom pada layar sempit dan empat kolom mulai lebar 480 piksel logis, sehingga label **Tambah Pengalaman** tetap muat.
+- Form mengikuti model `Experience` pada proyek Django: judul, organisasi, deskripsi, kategori, tanggal mulai, tanggal selesai opsional, dan URL thumbnail opsional. Tanggal diisi tanpa jam; jika tanggal selesai kosong, pengalaman ditandai masih berlangsung.
+- Tekan **Simpan** dengan isian wajib kosong untuk melihat pesan kesalahan. Setelah isian valid, dialog menampilkan ringkasan. **Tutup** kembali ke form tanpa menghapus isian. Form ini belum menyimpan data ke server atau perangkat.
+- Untuk menguji fitur ini dari root proyek, jalankan `flutter test test/experience_form_test.dart`. Kedua jalur masuk dan menu **Home** juga diuji di Chrome headless. Untuk mencoba sendiri, jalankan `flutter run -d chrome` dan kecilkan lebar jendela untuk mengecek pengguliran form.
 
-Untuk Tutorial 09, **Hermes Agent** membantu mengimplementasikan navigasi dan form dari `tutorial-9.pdf`, menata struktur file, dan menambahkan widget test.
+# AI Disclosure (last upd: Tugas 8)
+
+Untuk Tugas 8, **Hermes Agent** (model `gpt-6.2-sol`, provider OpenAI Codex) diberi PDF tugas dan diminta mengerjakannya di repo mobile yang sudah berisi Tutorial 09. AI membaca model `Experience` dari repo Django, mengimplementasikan form dan navigasi, menambahkan widget test, serta menyusun draf jawaban reflektif di bawah. Hasil awal sempat membuat teks kartu meluap di layar 320 piksel; tes regresi menangkapnya dan jumlah kolom grid disesuaikan sebelum pengujian ulang. Tes form menyimulasikan ruang yang tersisa saat keyboard tampil, tetapi tidak menggantikan pengujian keyboard pada perangkat Android fisik.
 
 ### Log Prompt
 
-> Jelaskan apa yang dimaksud dengan widget tree pada Flutter dan bagaimana hubungan induk-anak (parent-child) bekerja antar-widget!
-
-> Apa fungsi dari widget MaterialApp? Jelaskan mengapa widget ini umumnya digunakan sebagai root widget pada aplikasi Flutter!
-
-> Jelaskan perbedaan antara StatelessWidget dan StatefulWidget! Kapan kita sebaiknya memilih StatelessWidget dan kapan harus menggunakan StatefulWidget?
-
-> Apa itu BuildContext dan mengapa penting di Flutter? Bagaimana penggunaannya di dalam metode build?
-
-> Jelaskan konsep hot reload di Flutter dan apa perbedaannya dengan hot restart! Kapan kita tidak bisa hanya mengandalkan hot reload dan harus melakukan hot restart atau full restart?
+> @[tugas-8.pdf] kerjain le
 
 # Pertanyaan Reflektif
 
@@ -213,6 +213,13 @@ Untuk Tutorial 09, **Hermes Agent** membantu mengimplementasikan navigasi dan fo
    Hot Restart memulai ulang aplikasi Flutter dari kode Dart dan menghapus state yang sedang berjalan. Hot Restart dapat digunakan ketika perubahan harus menjalankan kembali `main()` atau inisialisasi state, termasuk ketika nilai awal yang sudah tersimpan tidak berubah melalui hot reload. Perubahan struktur tipe tertentu seperti parameter generik juga mungkin memerlukan restart.
 
    Full Restart menghentikan lalu menjalankan aplikasi kembali beserta proses build platform yang diperlukan. Ini diperlukan untuk perubahan kode native seperti Kotlin, Java, Swift, atau Objective-C, maupun perubahan plugin atau konfigurasi platform yang membutuhkan build ulang. Hot restart saja tidak mengompilasi ulang kode native.
+
+### Tugas 8
+
+1. `Navigator.push()` menaruh halaman baru di atas halaman lama, sehingga tombol Back bisa kembali ke halaman lama. `Navigator.pushReplacement()` mengganti halaman yang sedang aktif, sedangkan `Navigator.pop()` menutup halaman teratas dan kembali ke halaman di bawahnya. Kartu **Tambah Pengalaman** memakai `push()`. Saat **Home** dipilih di drawer, `pop()` pertama menutup drawer. Kalau Home masih berada di bawah form, `pop()` berikutnya menutup form. Kalau form sudah menggantikan Home lewat drawer, `pushReplacement()` mengganti form dengan Home.
+2. `Scaffold` menyediakan tempat untuk `AppBar`, `Drawer`, dan isi halaman. `AppBar` menampilkan judul halaman dan tombol untuk membuka drawer. `LeftDrawer` yang sama dipakai di Home, form proyek, dan form pengalaman, sehingga daftar menunya tetap sama. Contohnya, `AppBar` halaman Home dan **Tambah Pengalaman** mengambil warna `Theme.of(context).colorScheme.primary` dari tema portofolio yang berbasis indigo.
+3. Form memakai `Column` satu kolom supaya label, input, dan pesan kesalahan tidak berebut lebar. `EdgeInsets.all(16)` memberi jarak dari tepi, sedangkan `spacing: 16` memberi jarak antarinput. Saat layar pendek atau keyboard terbuka, `SingleChildScrollView` membuat bagian bawah, termasuk tombol **Simpan**, tetap bisa dijangkau dengan menggulir form.
+4. `GlobalKey<FormState>` memberi akses ke state `Form`. Saat **Simpan** ditekan, `validate()` menjalankan semua `validator`. Validator mengembalikan pesan kesalahan untuk input yang salah atau `null` jika benar. Misalnya, judul berisi tiga spasi ditolak karena `trim()` membuatnya kosong. Papan ketik URL hanya mempermudah pengetikan; pengguna masih bisa menempel `https://` tanpa host, jadi formatnya tetap harus diperiksa sebelum ringkasan ditampilkan.
 
 ## Referensi Teknis
 
