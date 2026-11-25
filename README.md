@@ -34,11 +34,12 @@ Kelas : PBP B
    flutter doctor
    ```
 
-   Selesaikan masalah pada toolchain untuk platform yang akan digunakan. Proyek ini tidak menggunakan virtual environment Python, migrasi Django, atau konfigurasi `.env`.
+   Selesaikan masalah pada toolchain untuk platform yang akan digunakan. Migrasi dan konfigurasi Python dilakukan di repositori backend `myportofolio`, bukan di sini.
 3. **Pasang dependency**:
 
    ```bash
    flutter pub get
+   dart run build_runner build
    ```
 4. **Nyalakan emulator atau sambungkan perangkat**, lalu periksa perangkat yang tersedia:
 
@@ -51,7 +52,7 @@ Kelas : PBP B
    flutter run
    ```
 
-   Jika terdapat beberapa perangkat, pilih target saat diminta atau jalankan `flutter run -d <device-id>` dengan ID dari `flutter devices`. Untuk target web Chrome yang sudah terpasang, gunakan `flutter run -d chrome`.
+   Jalankan Django lebih dulu sesuai panduan Tutorial 10 di bawah. Android emulator menggunakan `http://10.0.2.2:8000` secara default; untuk web gunakan `flutter run -d chrome --dart-define=API_BASE_URL=http://127.0.0.1:8000`.
 6. **Jalankan pemeriksaan kode dan tes** dari root proyek:
 
    ```bash
@@ -68,7 +69,9 @@ lib/
   main.dart             # Entry point, MyApp, MaterialApp, dan tema aplikasi.
   screens/
     menu.dart           # Halaman utama, InfoCard, dan ItemHomepage.
-    project_form.dart   # Form tambah proyek dan dialog konfirmasi.
+    project_form.dart   # Form tambah proyek dengan POST terautentikasi.
+    project_list_screen.dart / project_detail_screen.dart # Daftar publik dan detail proyek.
+    login_screen.dart   # Form login ke Django.
     experience_form.dart # Form tambah pengalaman dan dialog ringkasan.
   widgets/
     left_drawer.dart    # Navigasi Home, Add Project, dan Add Experience.
@@ -83,6 +86,24 @@ README.md               # Dokumentasi proyek dan jawaban reflektif.
 `main()` memanggil `runApp(const MyApp())`. `MyApp` menyiapkan `MaterialApp` dengan tema berbasis indigo dan menjadikan `MyHomePage` sebagai halaman awal. Halaman utama ada di `lib/screens/menu.dart`.
 
 # Progres Mingguan
+
+## Tutorial 10: Integrasi Django, Autentikasi, dan CI/CD
+
+Daftar dan detail proyek membaca `GET /api/v1/projects/` tanpa login. Menambah proyek memerlukan login dan izin pemilik portofolio. Flutter menyimpan token hanya di memori dan meminta Django mencabutnya saat logout. Form pengalaman dari Tugas 8 masih lokal.
+
+Untuk menjalankan backend lokal, gunakan checkout `myportofolio` yang sudah berisi perubahan Tutorial 10:
+
+```bash
+cd ../myportofolio
+python -m pip install -r requirements.txt
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
+```
+
+Form memakai `title`, `description`, `released_at` (`YYYY-MM-DD`), `tech_stack`, `project_url`, dan `project_image_url` opsional. `released_at` tetap wajib agar sesuai dengan kontrak API yang sudah ada. URL gambar juga disimpan melalui field `thumbnail` yang dipakai aplikasi web Django.
+
+Workflow `.github/workflows/main.yaml` menghasilkan `*.g.dart` sebelum analisis dan tes, lalu membangun artefak `app-release-apk` jika CI lulus. Atur variabel repositori `API_BASE_URL` ke URL HTTPS backend yang sudah diterapkan jika bukan URL PWS bawaan. HTTP untuk server lokal hanya diizinkan pada build Android debug.
 
 ## Tutorial 08: Basic Flutter
 

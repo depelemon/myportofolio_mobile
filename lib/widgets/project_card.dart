@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/screens/menu.dart';
+import 'package:myportofolio_mobile/widgets/auth_guard.dart';
 
 class ItemCard extends StatelessWidget {
   final ItemHomepage item;
@@ -14,22 +15,18 @@ class ItemCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        onTap: () {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              SnackBar(
-                content: Text('Kamu telah menekan tombol ${item.name}!'),
-              ),
-            );
+        onTap: () async {
+          if (item.onTap case final action?) {
+            await action(context);
+            return;
+          }
+          if (item.requiresLogin && !await ensureLoggedIn(context)) return;
+          if (!context.mounted) return;
           final destination = item.destination;
           if (destination != null) {
             Navigator.push(
               context,
-              MaterialPageRoute<void>(
-                // Keep the menu SnackBar from covering the form controls.
-                builder: (_) => ScaffoldMessenger(child: destination),
-              ),
+              MaterialPageRoute<void>(builder: (_) => destination),
             );
           }
         },

@@ -1,6 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/main.dart';
+import 'package:myportofolio_mobile/services/api_client.dart';
+import 'package:myportofolio_mobile/services/auth_state.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   testWidgets('Kartu Tambah Pengalaman membuka form dan Back kembali ke Home', (
@@ -22,7 +27,7 @@ void main() {
   testWidgets('Add Experience dari drawer menyediakan jalan kembali ke Home', (
     tester,
   ) async {
-    await tester.pumpWidget(const MyApp());
+    await _pumpLoggedInApp(tester);
     await _selectDrawerItem(tester, 'Add Experience');
     expect(find.widgetWithText(AppBar, 'Tambah Pengalaman'), findsOneWidget);
 
@@ -37,7 +42,7 @@ void main() {
   testWidgets('Home dari drawer menghapus rute form di atas Home', (
     tester,
   ) async {
-    await tester.pumpWidget(const MyApp());
+    await _pumpLoggedInApp(tester);
     final card = find.text('Tambah Pengalaman');
     await tester.ensureVisible(card);
     await tester.tap(card);
@@ -221,6 +226,21 @@ void main() {
       await tester.pumpAndSettle();
     }
   });
+}
+
+Future<void> _pumpLoggedInApp(WidgetTester tester) async {
+  final api = ApiClient(
+    client: MockClient(
+      (_) async => http.Response('{"token":"test-token"}', 200),
+    ),
+  );
+  addTearDown(api.close);
+  await tester.pumpWidget(MyApp(apiClient: api));
+  await tester
+      .element(find.byType(Scaffold))
+      .read<AuthState>()
+      .login('owner', 'password');
+  await tester.pumpAndSettle();
 }
 
 Future<void> _selectDrawerItem(WidgetTester tester, String label) async {

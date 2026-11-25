@@ -1,35 +1,50 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/screens/experience_form.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
+import 'package:myportofolio_mobile/screens/project_list_screen.dart';
+import 'package:myportofolio_mobile/services/auth_state.dart';
+import 'package:myportofolio_mobile/widgets/auth_guard.dart';
 import 'package:myportofolio_mobile/widgets/left_drawer.dart';
 import 'package:myportofolio_mobile/widgets/project_card.dart';
+import 'package:provider/provider.dart';
 
 class MyHomePage extends StatelessWidget {
-  MyHomePage({super.key});
+  const MyHomePage({super.key});
 
   final String npm = '2506601956';
   final String nama = 'David Liman';
   final String kelas = 'PBP B';
 
-  final List<ItemHomepage> items = [
-    ItemHomepage("Lihat Proyek", Icons.folder, Colors.blue),
-    ItemHomepage(
-      "Tambah Proyek",
-      Icons.add_circle,
-      Colors.green,
-      destination: const ProjectFormPage(),
-    ),
-    ItemHomepage(
-      "Tambah Pengalaman",
-      Icons.work_outline,
-      Colors.deepPurple,
-      destination: const ExperienceFormPage(),
-    ),
-    ItemHomepage("Logout", Icons.logout, Colors.red),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final isLoggedIn = context.watch<AuthState>().isLoggedIn;
+    final items = [
+      const ItemHomepage(
+        'Lihat Proyek',
+        Icons.folder,
+        Colors.blue,
+        destination: ProjectListScreen(),
+      ),
+      const ItemHomepage(
+        'Tambah Proyek',
+        Icons.add_circle,
+        Colors.green,
+        destination: ProjectFormPage(),
+        requiresLogin: true,
+      ),
+      const ItemHomepage(
+        'Tambah Pengalaman',
+        Icons.work_outline,
+        Colors.deepPurple,
+        destination: ExperienceFormPage(),
+      ),
+      ItemHomepage(
+        isLoggedIn ? 'Logout' : 'Login',
+        isLoggedIn ? Icons.logout : Icons.login,
+        isLoggedIn ? Colors.red : Colors.indigo,
+        onTap: isLoggedIn ? logout : ensureLoggedIn,
+      ),
+    ];
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -117,6 +132,15 @@ class ItemHomepage {
   final IconData icon;
   final Color color;
   final Widget? destination;
+  final bool requiresLogin;
+  final Future<void> Function(BuildContext)? onTap;
 
-  ItemHomepage(this.name, this.icon, this.color, {this.destination});
+  const ItemHomepage(
+    this.name,
+    this.icon,
+    this.color, {
+    this.destination,
+    this.requiresLogin = false,
+    this.onTap,
+  });
 }
